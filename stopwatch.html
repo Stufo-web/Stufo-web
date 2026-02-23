@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stopwatch - Stufo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/timer.css">
+</head>
+
+<body>
+
+<div class="timer-container">
+
+    <h2>Stopwatch</h2>
+
+    <div class="timer-display" id="display">00:00:00</div>
+
+    <div class="controls">
+        <button onclick="startStopwatch()">Start</button>
+        <button onclick="pauseStopwatch()">Pause</button>
+        <button onclick="resetStopwatch()">Reset</button>
+    </div>
+
+
+
+
+    <div class="back-link">
+        <a href="dashboard.html">← Back to Dashboard</a>
+      <br>
+  
+      <button class="analysis-btn" onclick="window.location.href='analysis.html'">View Analysis</button>
+    </div>
+
+</div>
+
+<script>
+
+let seconds = 0;
+let interval = null;
+let running = false;
+let lapCount = 1;
+
+const display = document.getElementById("display");
+const lapsContainer = document.getElementById("laps");
+
+function formatTime(totalSeconds) {
+    const hrs = Math.floor(totalSeconds / 3600);
+    const mins = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
+
+    return (
+        String(hrs).padStart(2, '0') + ":" +
+        String(mins).padStart(2, '0') + ":" +
+        String(secs).padStart(2, '0')
+    );
+}
+
+function startStopwatch() {
+    if (running) return;
+
+    running = true;
+    interval = setInterval(() => {
+        seconds++;
+        display.textContent = formatTime(seconds);
+    }, 1000);
+}
+
+function pauseStopwatch() {
+    clearInterval(interval);
+    running = false;
+}
+
+function resetStopwatch() {
+    clearInterval(interval);
+    running = false;
+    seconds = 0;
+    lapCount = 1;
+    display.textContent = "00:00:00";
+    lapsContainer.innerHTML = "";
+}
+
+function recordLap() {
+    if (!running) return;
+
+    const lapTime = document.createElement("div");
+    lapTime.style.padding = "8px";
+    lapTime.style.marginTop = "5px";
+    lapTime.style.background = "rgba(255,255,255,0.1)";
+    lapTime.style.borderRadius = "8px";
+
+    lapTime.innerText = "Lap " + lapCount + " - " + formatTime(seconds);
+    lapsContainer.prepend(lapTime);
+
+    lapCount++;
+}
+</script>
+<script type="module">
+const userDoc = await getDoc(doc(db,"users",currentUser.uid));
+const activeTask = userDoc.data().activeTask;
+
+if(!activeTask) return;
+
+await addDoc(
+    collection(db,"users",currentUser.uid,"sessions"),
+    {
+        taskId: activeTask.taskId,
+        taskName: activeTask.taskName,
+        durationMinutes: durationMinutes,
+        type: type,
+        date: new Date()
+    }
+);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Stufo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+  
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+
+        <div class="top-bar">
+            <h2 id="welcome"></h2>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+<h3 id="taskHeading"></h3>
+        <div class="main-buttons">
+            <button class="feature-btn" onclick="window.location.href='timer.html'">Timer</button>
+            <button class="feature-btn" onclick="window.location.href='stopwatch.html'">Stopwatch</button>
+            <button class="feature-btn" onclick="window.location.href='pomodoro.html'">Pomodoro Technique</button>
+        </div>
+
+        <div class="todo-section">
+            <button class="todo-btn" onclick="window.location.href='todos.html'">Open Todo List</button>
+        </div>
+
+    </div>
+      <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut }
+        from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        const firebaseConfig = {
+  apiKey:   "AIzaSyC9kTiwWg1HoOZoRFEiWVjLnmVEDskSidw",
+  authDomain: "stufo-34461.firebaseapp.com",    
+    projectId: "stufo-34461",
+    storageBucket: "stufo-34461.firebasestorage.app",
+    messagingSenderId: "65118577418",
+    appId: "1:65118577418:web:d6ac5cc90d2a62789210f3"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "signin.html";
+            } else {
+                document.getElementById("welcome").innerText =
+                    "Welcome, " + (user.displayName || user.email);
+            }
+        });
+
+        window.logout = function () {
+            signOut(auth).then(() => {
+                window.location.href = "index.html";
+            });
+        };
+              
+
+    </script>
+    <script type="module" >
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { 
+  getFirestore,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC9kTiwWg1HoOZoRFEiWVjLnmVEDskSidw",
+  authDomain: "stufo-34461.firebaseapp.com",
+  projectId: "stufo-34461",
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, async (user) => {
+
+  if(user){
+
+    const userRef = doc(db,"users",user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if(userSnap.exists()){
+      const data = userSnap.data();
+
+      if(data.activeTask){
+        document.getElementById("taskHeading").innerText =
+          "Working On: " + data.activeTask.taskName;
+      } else {
+        document.getElementById("taskHeading").innerText =
+          "No Active Task Selected";
+      }
+    }
+
+  } else {
+    location.href="signin.html";
+  }
+
+});
+    </script>
+</body>
+</html>

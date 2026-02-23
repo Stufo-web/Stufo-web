@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pomodoro - Stufo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/timer.css">
+</head>
+
+<body>
+
+<div class="timer-container">
+
+    <h2>Pomodoro Technique</h2>
+
+    <div class="timer-display" id="display">25:00</div>
+
+    <p id="modeLabel">Focus Time</p>
+    <p>Completed Sessions: <span id="sessionCount">0</span></p>
+
+    <div class="controls">
+        <button onclick="startPomodoro()">Start</button>
+        <button onclick="pausePomodoro()">Pause</button>
+        <button onclick="resetPomodoro()">Reset</button>
+    </div>
+
+    <div class="back-link">
+        <a href="dashboard.html">← Back to Dashboard</a>
+        <br>
+        <button class="analysis-btn" onclick="window.location.href='analysis.html'">
+            View Analysis
+        </button>
+    </div>
+
+</div>
+
+<script>
+
+let timeLeft = 1500; // 25 minutes
+let interval = null;
+let running = false;
+
+let mode = "focus"; // focus | shortBreak | longBreak
+let sessionsCompleted = 0;
+
+const display = document.getElementById("display");
+const modeLabel = document.getElementById("modeLabel");
+const sessionCount = document.getElementById("sessionCount");
+
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+
+    return (
+        String(mins).padStart(2, '0') + ":" +
+        String(secs).padStart(2, '0')
+    );
+}
+
+function startPomodoro() {
+    if (running) return;
+
+    running = true;
+
+    interval = setInterval(() => {
+        if (timeLeft > 0) {
+            timeLeft--;
+            display.textContent = formatTime(timeLeft);
+        } else {
+            clearInterval(interval);
+            running = false;
+            switchMode();
+        }
+    }, 1000);
+}
+
+function pausePomodoro() {
+    clearInterval(interval);
+    running = false;
+}
+
+function resetPomodoro() {
+    clearInterval(interval);
+    running = false;
+
+    mode = "focus";
+    timeLeft = 1500;
+    display.textContent = "25:00";
+    modeLabel.textContent = "Focus Time";
+}
+
+function switchMode() {
+
+    if (mode === "focus") {
+        sessionsCompleted++;
+        sessionCount.textContent = sessionsCompleted;
+
+        if (sessionsCompleted % 4 === 0) {
+            mode = "longBreak";
+            timeLeft = 900; // 15 min
+            modeLabel.textContent = "Long Break";
+        } else {
+            mode = "shortBreak";
+            timeLeft = 300; // 5 min
+            modeLabel.textContent = "Short Break";
+        }
+
+    } else {
+        mode = "focus";
+        timeLeft = 1500;
+        modeLabel.textContent = "Focus Time";
+    }
+
+    display.textContent = formatTime(timeLeft);
+}
+
+display.textContent = formatTime(timeLeft);
+</script>
+<script type="module">
+const userDoc = await getDoc(doc(db,"users",currentUser.uid));
+const activeTask = userDoc.data().activeTask;
+
+if(!activeTask) return;
+
+await addDoc(
+    collection(db,"users",currentUser.uid,"sessions"),
+    {
+        taskId: activeTask.taskId,
+        taskName: activeTask.taskName,
+        durationMinutes: durationMinutes,
+        type: type,
+        date: new Date()
+    }
+);
+
+</script>
+
+</body>
+</html>

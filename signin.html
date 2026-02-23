@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign In - Stufo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/signin.css">
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged }
+        from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyC9kTiwWg1HoOZoRFEiWVjLnmVEDskSidw",
+  authDomain: "stufo-34461.firebaseapp.com",
+  projectId: "stufo-34461",
+  storageBucket: "stufo-34461.firebasestorage.app",
+  messagingSenderId: "65118577418",
+  appId: "1:65118577418:web:d6ac5cc90d2a62789210f3"
+};
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Redirect if already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = "dashboard.html";
+            }
+        });
+
+        window.signIn = function () {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    window.location.href = "dashboard.html";
+                })
+                .catch((error) => {
+                    document.getElementById("error").innerText = error.message;
+                });
+        };
+    </script>
+</head>
+
+<body>
+
+<div class="signin-card">
+    <h2>Welcome Back</h2>
+
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+
+    <button class="signin-btn" onclick="signIn()">Sign In</button>
+
+    <p id="error" style="color: #ff4d4d; font-size: 13px;"></p>
+
+    <div class="signin-footer">
+        Don’t have an account?
+        <a href="signup.html">Sign Up</a>
+    </div>
+</div>
+
+</body>
+</html>

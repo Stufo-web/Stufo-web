@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Study Analysis - Stufo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/analysis.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged }
+        from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import {
+            getFirestore,
+            collection,
+            query,
+            where,
+            getDocs,
+            orderBy
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+     const firebaseConfig = {
+    apiKey: "AIzaSyC9kTiwWg1HoOZoRFEiWVjLnmVEDskSidw",
+    authDomain: "stufo-34461.firebaseapp.com",
+    projectId: "stufo-34461",
+    storageBucket: "stufo-34461.firebasestorage.app",
+    messagingSenderId: "65118577418",
+    appId: "1:65118577418:web:d6ac5cc90d2a62789210f3"
+};
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let durationChart;
+        let subjectChart;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "signin.html";
+                return;
+            }
+
+            const q = query(
+                collection(db, "studySessions"),
+                where("uid", "==", user.uid),
+                orderBy("timestamp", "asc")
+            );
+
+            const snapshot = await getDocs(q);
+
+            const sessions = [];
+            snapshot.forEach(doc => sessions.push(doc.data()));
+
+            if (sessions.length === 0) {
+                document.getElementById("noData").style.display = "block";
+                return;
+            }
+
+            renderStats(sessions);
+            renderCharts(sessions);
+            renderHistory(sessions);
+        });
+
+        function renderStats(sessions) {
+            let totalMinutes = 0;
+            let max = 0;
+
+            sessions.forEach(s => {
+                totalMinutes += s.duration / 60;
+                max = Math.max(max, s.duration / 60);
+            });
+
+            const avg = (totalMinutes / sessions.length).toFixed(1);
+
+            document.getElementById("totalSessions").innerText = sessions.length;
+            document.getElementById("totalTime").innerText = totalMinutes.toFixed(1) + " mins";
+            document.getElementById("avgTime").innerText = avg + " mins";
+            document.getElementById("longest").innerText = max.toFixed(1) + " mins";
+        }
+
+        function renderCharts(sessions) {
+
+            const durations = sessions.map(s => (s.duration / 60).toFixed(1));
+            const labels = sessions.map((_, i) => "Session " + (i + 1));
+
+            const ctx1 = document.getElementById("durationChart").getContext("2d");
+            durationChart = new Chart(ctx1, {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Duration (mins)",
+                        data: durations,
+                        borderColor: "#ffffff",
+                        backgroundColor: "rgba(255,255,255,0.1)",
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { labels: { color: "white" } }
+                    },
+                    scales: {
+                        x: { ticks: { color: "white" } },
+                        y: { ticks: { color: "white" } }
+                    }
+                }
+            });
+
+            // Subject breakdown
+            const subjectMap = {};
+            sessions.forEach(s => {
+                const subject = s.subject || "General";
+                subjectMap[subject] = (subjectMap[subject] || 0) + s.duration / 60;
+            });
+
+            const ctx2 = document.getElementById("subjectChart").getContext("2d");
+            subjectChart = new Chart(ctx2, {
+                type: "doughnut",
+                data: {
+                    labels: Object.keys(subjectMap),
+                    datasets: [{
+                        data: Object.values(subjectMap),
+                        backgroundColor: [
+                            "#ff6b6b",
+                            "#6c5ce7",
+                            "#00cec9",
+                            "#fdcb6e",
+                            "#00b894"
+                        ]
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: { labels: { color: "white" } }
+                    }
+                }
+            });
+        }
+
+        function renderHistory(sessions) {
+            const container = document.getElementById("history");
+
+            container.innerHTML = sessions.map((s, i) => `
+                <div class="session-item">
+                    <span>Session ${i + 1}</span>
+                    <span>${(s.duration/60).toFixed(1)} mins</span>
+                </div>
+            `).reverse().join("");
+        }
+    </script>
+</head>
+
+<body>
+
+<div class="analysis-container">
+
+    <h1>📊 Study Analysis</h1>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Sessions</h3>
+            <p id="totalSessions">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Total Time</h3>
+            <p id="totalTime">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Average</h3>
+            <p id="avgTime">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Longest</h3>
+            <p id="longest">0</p>
+        </div>
+    </div>
+
+    <div id="noData" style="display:none; margin-top:40px;">
+        No study sessions yet.
+    </div>
+
+    <div class="chart-box">
+        <h2>Session Trend</h2>
+        <canvas id="durationChart"></canvas>
+    </div>
+
+    <div class="chart-box">
+        <h2>Subject Breakdown</h2>
+        <canvas id="subjectChart"></canvas>
+    </div>
+
+    <div class="history-box">
+        <h2>Session History</h2>
+        <div id="history"></div>
+    </div>
+
+    <button onclick="window.location.href='dashboard.html'" class="back-btn">
+        Back to Dashboard
+    </button>
+
+</div>
+
+</body>
+</html>

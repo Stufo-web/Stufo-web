@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Todos - Stufo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="css/timer.css">
+</head>
+<body>
+
+<div class="timer-container">
+
+<h2>Todo Manager</h2>
+
+<div style="margin-bottom:20px;">
+  <input type="text" id="taskInput" placeholder="Enter task..." style="width:70%;">
+  <button class="addtask-btn" onclick="addTask()">Add</button>
+</div>
+
+<div id="taskList"></div>
+
+<br>
+<button class="back-btn" onclick="location.href='dashboard.html'">Back to Dashboard</button>
+
+</div>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { 
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC9kTiwWg1HoOZoRFEiWVjLnmVEDskSidw",
+  authDomain: "stufo-34461.firebaseapp.com",
+  projectId: "stufo-34461",
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+
+onAuthStateChanged(auth, async (user) => {
+
+  if(user){
+    currentUser = user;
+
+    await setDoc(
+      doc(db,"users",user.uid),
+      { createdAt:new Date() },
+      { merge:true }
+    );
+
+    loadTasks();
+  } 
+  else {
+    location.href="signin.html";
+  }
+
+});
+
+
+// ➕ ADD TASK
+window.addTask = async function(){
+
+  const input = document.getElementById("taskInput");
+  const value = input.value.trim();
+
+  if(!value) return;
+
+  await addDoc(
+    collection(db,"users",currentUser.uid,"todos"),
+    {
+      name:value,
+      completed:false,
+      createdAt:new Date()
+    }
+  );
+
+  input.value="";
+  loadTasks();
+}; 
+
+
+
+// 📥 LOAD TASKS
+async function loadTasks(){
+
+  const list = document.getElementById("taskList");
+  list.innerHTML="";
+
+  const snapshot = await getDocs(
+    collection(db,"users",currentUser.uid,"todos")
+  );
+
+  snapshot.forEach(docSnap => {
+
+    const data = docSnap.data();
+    const id = docSnap.id;
+
+    const div = document.createElement("div");
+    div.style.marginBottom="10px";
+    div.style.padding="12px";
+    div.style.background="rgba(255,255,255,0.1)";
+    div.style.borderRadius="8px";
+
+    div.innerHTML = `
+      <strong style="text-decoration:${data.completed ? "line-through" : "none"}">
+        ${data.name}
+      </strong><br><br>
+
+      <button class="work-btn" onclick="workOnTask('${id}','${data.name}')">
+        Work On Task
+      </button>
+
+      <button class="work-btn" onclick="toggleComplete('${id}')">
+        ${data.completed ? "Undo" : "Complete"}
+      </button>
+
+      <button class="back-btn" onclick="deleteTask('${id}')">
+        Delete
+      </button>
+    `;
+
+    list.appendChild(div);
+
+  });
+
+}
+
+
+
+// ✅ MARK COMPLETE / UNDO
+window.toggleComplete = async function(id){
+
+  const taskRef = doc(db,"users",currentUser.uid,"todos",id);
+  const snap = await getDoc(taskRef);
+
+  const currentStatus = snap.data().completed;
+
+  await updateDoc(taskRef,{
+    completed:!currentStatus
+  });
+
+  loadTasks();
+};
+
+
+
+// 🗑 DELETE TASK
+
+window.deleteTask = async function(id){
+
+  const taskRef = doc(db,"users",currentUser.uid,"todos",id);
+
+  // Check if this task is active
+  const userRef = doc(db,"users",currentUser.uid);
+  const userSnap = await getDoc(userRef);
+
+  if(userSnap.exists()){
+    const data = userSnap.data();
+
+    if(data.activeTask && data.activeTask.taskId === id){
+      await updateDoc(userRef,{
+        activeTask:null
+      });
+    }
+  }
+
+  // Now delete task
+  await deleteDoc(taskRef);
+
+  loadTasks();
+};
+
+
+// 🎯 SET ACTIVE TASK
+window.workOnTask = async function(taskId, taskName){
+
+  await updateDoc(
+    doc(db,"users",currentUser.uid),
+    {
+      activeTask:{
+        taskId:taskId,
+        taskName:taskName,
+        startedAt:new Date()
+      }
+    }
+  );
+
+  location.href="dashboard.html";
+};
+
+</script>
+
+</body>
+</html>

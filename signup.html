@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up - Stufo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/signup.css">
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile }
+        from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyC9kTiwWg1HoOZoRFEiWVjLnmVEDskSidw",
+  authDomain: "stufo-34461.firebaseapp.com",    
+    projectId: "stufo-34461",
+    storageBucket: "stufo-34461.firebasestorage.app",
+    messagingSenderId: "65118577418",
+    appId: "1:65118577418:web:d6ac5cc90d2a62789210f3"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        window.signUp = function () {
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    return updateProfile(userCredential.user, {
+                        displayName: name
+                    });
+                })
+                .then(() => {
+                    window.location.href = "dashboard.html";
+                })
+                .catch((error) => {
+                    document.getElementById("error").innerText = error.message;
+                });
+        };
+    </script>
+</head>
+
+<body>
+
+<div class="signup-card">
+    <h2>Create Account</h2>
+
+    <input type="text" id="name" placeholder="Full Name">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+
+    <button class="signup-btn" onclick="signUp()">Sign Up</button>
+
+    <p id="error" style="color: #ff4d4d; font-size: 13px;"></p>
+
+    <div class="signup-footer">
+        Already have an account?
+        <a href="signin.html">Sign In</a>
+    </div>
+</div>
+
+</body>
+</html>

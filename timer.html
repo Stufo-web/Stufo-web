@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Timer - Stufo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/timer.css">
+</head>
+
+<body>
+
+<div class="timer-container">
+
+    <h2>Countdown Timer</h2>
+
+    <div class="timer-display" id="display">00:00</div>
+
+    <div class="input-section">
+        <input type="number" id="minutesInput" placeholder="Enter minutes" min="1">
+    </div>
+
+    <div class="controls">
+        <button onclick="startTimer()">Start</button>
+        <button onclick="pauseTimer()">Pause</button>
+        <button onclick="resetTimer()">Reset</button>
+    </div>
+
+    <div class="back-link">
+        <a href="dashboard.html">← Back to Dashboard</a>
+        <br>
+    <button class="analysis-btn" onclick="window.location.href='analysis.html'">View Analysis</button>
+    </div>
+
+</div>
+
+<script  src="js/timer.js"></script>
+
+<script type="module">
+const userDoc = await getDoc(doc(db,"users",currentUser.uid));
+const activeTask = userDoc.data().activeTask;
+
+if(!activeTask) return;
+
+await addDoc(
+    collection(db,"users",currentUser.uid,"sessions"),
+    {
+        taskId: activeTask.taskId,
+        taskName: activeTask.taskName,
+        durationMinutes: durationMinutes,
+        type: type,
+        date: new Date()
+    }
+);
+</script>
+
+</body>
+</html>

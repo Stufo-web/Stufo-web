@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stufo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } 
+        from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyC9kTiwWg1HoOZoRFEiWVjLnmVEDskSidw",
+  authDomain: "stufo-34461.firebaseapp.com",
+  projectId: "stufo-34461",
+  storageBucket: "stufo-34461.firebasestorage.app",
+  messagingSenderId: "65118577418",
+  appId: "1:65118577418:web:d6ac5cc90d2a62789210f3"
+};
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+    
+
+        // Auto redirect if already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = "dashboard.html";
+            }
+        });
+
+        window.loginWithGoogle = function () {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    window.location.href = "dashboard.html";
+                })
+                .catch((error) => {
+                    alert(error.message);
+                });
+        };
+    </script>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Stufo</h1>
+        <p>Your Study Buddy</p>
+        <button onclick="window.location.href='signup.html'">Sign Up</button>
+        
+<button onclick="window.location.href='signin.html'">sign in</button>
+<br>
+<br>
+
+        <div class="footer">
+            <p>Study smart. Stay focused.</p>
+        </div>
+    </div>
+
+</body>
+</html>
