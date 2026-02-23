@@ -1,0 +1,65 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1d2b64, #f8cdda);
+    color: white;
+    padding: 40px;
+}
+
+.analysis-container {
+    max-width: 1000px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.stat-card {
+    background: rgba(255,255,255,0.15);
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.stat-card:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+.chart-box {
+    margin-top: 50px;
+    background: rgba(255,255,255,0.1);
+    padding: 30px;
+    border-radius: 15px;
+}
+
+.history-box {
+    margin-top: 50px;
+}
+
+.session-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    margin-top: 10px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+}
+
+.back-btn {
+    margin-top: 50px;
+    padding: 12px 25px;
+    border-radius: 25px;
+    border: none;
+    background: white;
+    color: black;
+    cursor: pointer;
+}

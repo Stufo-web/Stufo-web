@@ -1,0 +1,74 @@
+/* ===== Sign In Page ===== */
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: white;
+}
+
+.signin-card {
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    width: 360px;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    text-align: center;
+}
+
+.signin-card h2 {
+    margin-bottom: 25px;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.signin-card input {
+    width: 100%;
+    padding: 13px;
+    margin: 12px 0;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+.signin-card input:focus {
+    box-shadow: 0 0 0 2px #00c6ff;
+}
+
+.signin-btn {
+    width: 100%;
+    padding: 13px;
+    margin-top: 18px;
+    border-radius: 30px;
+    border: none;
+    background: #00c6ff;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.signin-btn:hover {
+    background: #009bd8;
+    transform: scale(1.03);
+}
+
+.signin-footer {
+    margin-top: 18px;
+    font-size: 14px;
+}
+
+.signin-footer a {
+    color: #00c6ff;
+    text-decoration: none;
+}
+
+.signin-footer a:hover {
+    text-decoration: underline;
+}

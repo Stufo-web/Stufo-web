@@ -1,0 +1,145 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #232526, #414345);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.timer-container {
+    text-align: center;
+    background: rgba(255,255,255,0.05);
+    padding: 40px;
+    border-radius: 20px;
+    width: 350px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.timer-display {
+    font-size: 60px;
+    margin: 20px 0;
+    letter-spacing: 2px;
+}
+
+.input-section input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.controls button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.controls button:hover {
+    transform: scale(1.05);
+}
+
+.controls button:nth-child(1) {
+    background: #00c853;
+    color: white;
+}
+
+.controls button:nth-child(2) {
+    background: #ffab00;
+    color: white;
+}
+
+.controls button:nth-child(3) {
+    background: #d50000;
+    color: white;
+}
+
+.back-link {
+    margin-top: 20px;
+}
+
+.back-link a {
+    color: #bbb;
+    text-decoration: none;
+}
+
+.back-link a:hover {
+    text-decoration: underline;
+}
+.analysis-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    border: none;
+    background: #00c6ff;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+.analysis-btn:hover {
+    background: #009bd8;
+    transform: scale(1.05);
+}
+.addtask-btn {
+      margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    border: none;
+    background: #00c6ff;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+
+}
+.addtask-btn:hover {
+    background: #009bd8;
+    transform: scale(1.05);
+}
+.back-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    border: none;
+    background: #ff758c;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+.back-btn:hover {
+    background: #e94e77;
+    transform: scale(1.05);
+}
+.work-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    border: none;
+    background: #00c853;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+.work-btn:hover {
+    background: #00c853;
+    transform: scale(1.05);
+}
